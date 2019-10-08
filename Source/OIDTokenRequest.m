@@ -272,7 +272,10 @@ static NSString *const kAdditionalParametersKey = @"additionalParameters";
 }
 
 - (NSURLRequest *)URLRequest {
-  static NSString *const kHTTPPost = @"POST";
+ static NSString *const kHTTPPost = @"POST";
+  static NSString *const kHTTPContentTypeHeaderKey = @"Content-Type";
+  static NSString *const kHTTPContentTypeHeaderValue =
+      @"application/x-www-form-urlencoded; charset=UTF-8";
   static NSString *const kHTTPAcceptHeaderKey = @"Accept";
   static NSString *const kHTTPAcceptHeaderValue = @"application/json";
 
@@ -284,12 +287,7 @@ static NSString *const kAdditionalParametersKey = @"additionalParameters";
   OIDURLQueryComponent *bodyParameters = [self tokenRequestBody];
   NSMutableDictionary *httpHeaders = [[NSMutableDictionary alloc] init];
 
-
-  /**
-   * GitHub will only return a spec-compliant response if JSON is explicitly defined
-   * as an acceptable response type. This is essentially harmless for all other
-   * spec-compliant IDPs.
-   */
+  // Response should be in JSON (not e.g. XML)
   [httpHeaders setObject:kHTTPAcceptHeaderValue forKey:kHTTPAcceptHeaderKey];
 
   if (_clientSecret) {
