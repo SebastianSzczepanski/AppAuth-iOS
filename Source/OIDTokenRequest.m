@@ -262,9 +262,8 @@ static NSString *const kAdditionalParametersKey = @"additionalParameters";
 
 - (NSURLRequest *)URLRequest {
   static NSString *const kHTTPPost = @"POST";
-  static NSString *const kHTTPContentTypeHeaderKey = @"Content-Type";
-  static NSString *const kHTTPContentTypeHeaderValue =
-      @"application/x-www-form-urlencoded; charset=UTF-8";
+  static NSString *const kHTTPAcceptHeaderKey = @"Accept";
+  static NSString *const kHTTPAcceptHeaderValue = @"application/json";
 
   NSURL *tokenRequestURL = [self tokenRequestURL];
   NSMutableURLRequest *URLRequest = [[NSURLRequest requestWithURL:tokenRequestURL] mutableCopy];
@@ -273,6 +272,13 @@ static NSString *const kAdditionalParametersKey = @"additionalParameters";
 
   OIDURLQueryComponent *bodyParameters = [self tokenRequestBody];
   NSMutableDictionary *httpHeaders = [[NSMutableDictionary alloc] init];
+  
+  /**
+   * GitHub will only return a spec-compliant response if JSON is explicitly defined
+   * as an acceptable response type. This is essentially harmless for all other
+   * spec-compliant IDPs.
+   */
+  [httpHeaders setObject:kHTTPAcceptHeaderValue forKey:kHTTPAcceptHeaderKey];
 
   if (_clientSecret) {
     // The client id and secret are encoded using the "application/x-www-form-urlencoded" 
